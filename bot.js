@@ -3,8 +3,8 @@ const client = new Discord.Client();
 const db = require("quick.db");
 
 const serverStats = {
-    guildID: 'SERVER ID HERE',
-    ticketCategoryID: 'TICKET CATEGORY ID HERE'
+    guildID: '576401840518856704',
+    ticketCategoryID: '576401840518856706'
 
 }
 
