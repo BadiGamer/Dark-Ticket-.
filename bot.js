@@ -194,4 +194,18 @@ if (message.content.startsWith(prefix + 'setava')) {
 });
 
 
+client.on('message', message => {    
+    var prefix = "-";
+            if (message.content.startsWith(prefix + "rename")) {
+                if(!message.channel.guild) return;
+                if (!message.member.hasPermission("MANAGE_CHANNEL"))  return;
+      var a= message.content.split(' ').slice(1).join("  ");
+      if (!a) return message.reply("Example `-rename Light`")
+      message.channel.setName(`${a}`)
+      .then(newChannel => message.channel.send(`تم تغير اسم الروم الــى [**${a}**]`))
+      .catch(console.error);
+            }
+        });
+
+
 client.login(process.env.BOT_TOKEN);
