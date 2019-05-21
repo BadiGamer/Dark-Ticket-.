@@ -13,7 +13,7 @@ client.on('message',async message => {
     if(message.author.bot || message.channel.type === 'dm') return;
     let args = message.content.split(" ");
     let author = message.author.id;
-    if(args[0].toLowerCase() === `-help`) {
+    if(args[0].toLowerCase() === `${prefix}help`) {
             let embed = new Discord.RichEmbed()
             .setAuthor(message.author.username, message.author.avatarURL)
             .setThumbnail(message.author.avatarURL)
