@@ -1,211 +1,99 @@
-﻿const Discord = require("discord.js");
-const client = new Discord.Client();
-const prefix = "-";
+const Discord  = require('discord.js');
+const client     = new Discord.Client();
+const prefix   = "-";
+const category = "580187816063926293";
+const devs     = ["527505679171321856", "test"];
+let mtickets   = true;
+let tchannels  = [];
+let current    = 0;
 
 
- 
- 
- 
-console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-console.log('         [Wait please .. ]       ')
-console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-client.on('ready', () => {
-    console.log('')
-    console.log('')
-    console.log('')
-    console.log('')
-    console.log('')
-    console.log('')
-    console.log('')
-    console.log('')
-  console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-  console.log(`Logged in as [ ${client.user.tag}! ]`);
-  console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-  console.log('[           BOT IS ONLINE         ]')
-  console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-  console.log('[        info         ]')
-  console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-  console.log(`servers! [ " ${client.guilds.size} " ]`);
-  console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-  console.log(`Users! [ " ${client.users.size} " ]`);
-  console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-  console.log(`channels! [ " ${client.channels.size} " ]`);
-  console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
- 
-client.user.setGame("-help -invite|By Mahdi ", "https://www.twitch.tv/alpha");
-});
- 
-
- 
- client.on("message", (message) => {
- 
-   if (message.content.startsWith("-new")) {  
-        const reason = message.content.split(" ").slice(1).join(" ");  
-        if (!message.guild.roles.exists("name", "Support Team")) return message.channel.send(`لازم تسوي رتبة اسمها \`Support Team\` وتنطي البوت ادمنيتر حتا يقدر يسوي الرومات ويعدل برمشنات`);
-        if (message.guild.channels.exists("name", "ticket-{message.author.id}" + message.author.id)) return message.channel.send(`You already have a ticket open.`);    /// ALPHA CODES
-        message.guild.createChannel(`ticket-${message.author.username}`, "text").then(c => {
-            let role = message.guild.roles.find("name", "Support Team");
-            let role2 = message.guild.roles.find("name", "@everyone");
-            c.overwritePermissions(role, {
-                SEND_MESSAGES: true,
-                READ_MESSAGES: true
-            });  
-            c.overwritePermissions(role2, {
-                SEND_MESSAGES: false,
-                READ_MESSAGES: false
-            });
-            c.overwritePermissions(message.author, {
-                SEND_MESSAGES: true,
-                READ_MESSAGES: true
-            });
-            message.channel.send(`:white_check_mark: تم انشاء تذكرتك, #${c.name}.`);
-            const embed = new Discord.RichEmbed()
-                .setColor(0xCF40FA)
-                .addField(`Hey ${message.author.username}!`, `:white_check_mark:  تم انشاء تذكرتك, #ticket`)
-                .setTimestamp();
-            c.send({
-                embed: embed
-            });
-        }).catch(console.error);
-    }
- 
- 
-  if (message.content.startsWith("-close")) {
-        if (!message.channel.name.startsWith(`ticket-`)) return message.channel.send(`You can't use the close command outside of a ticket channel.`);
- 
-       message.channel.send(`هل انت متأكد من اقفالك للتذكرة اذا متأكد اكتب-confirm`)
-           .then((m) => {
-               message.channel.awaitMessages(response => response.content === '-confirm', {
-                       max: 1,
-                       time: 10000,
-                       errors: ['time'],
-                   })  
-                   .then((collected) => {
-                       message.channel.delete();
-                   })  
-                   .catch(() => {
-                       m.edit('Ticket close timed out, the ticket was not closed.').then(m2 => {
-                           m2.delete();
-                       }, 3000);
-                   });
-           });
-   }
- 
-});
-
-
-
-
-
-client.on("message", async message => {
-    if(message.content.startsWith(prefix + "help")) {
-        let help = new Discord.RichEmbed()
-            .setColor("RANDOM")
+client.on('ready',async () => console.log(`   - " ${client.user.username} " , Tickety is ready to work.`));
+client.on('message',async message => {
+    if(message.author.bot || message.channel.type === 'dm') return;
+    let args = message.content.split(" ");
+    let author = message.author.id;
+    if(args[0].toLowerCase() === `${prefix}help`) {
+            let embed = new Discord.RichEmbed()
+            .setAuthor(message.author.username, message.author.avatarURL)
             .setThumbnail(message.author.avatarURL)
-            .setDescription(`**__ticketbot  | by Mahdi__ 
-
-          ${prefix}new :  لفتح تيك 
-          ${prefix}close :  لقفل التكيت  
-     ${prefix}invite: لدعوه البوت الي سيرفرك
-         ${prefix}bot:لمعلومات الوت
-Support Team ملحوظه يجب عمل رتبه
-				 
-            **`);
-			
-            message.channel.sendEmbed(help); // رابط السيرفر يعود الى سيرفر CODES .
-    }
+            .setColor("#36393e")
+			.addField(`⇏ -new                     → لفتح تكت`)
+            .addField(`⇏ -close                   → لغلق تكت`)
+            .addField(`⇏ -mtickets enable/disable → لتعطيل وتفعيل تكت `)
+			.addField(`⇏ cleartickets             →  لمسح جميع تكتات`)
+            .addField(``)
+            await message.channel.send(`:white_check_mark: , **هذه قائمة بجميع اوامر البووت.**`);
+            await message.channel.send(embed);
+    } else if(args[0].toLowerCase() === `${prefix}new`) {
+        if(mtickets === false) return message.channel.send(`:tools: , **تم ايقاف هذه الخاصية من قبل احد ادارة السيرفر**`);
+        if(!message.guild.me.hasPermission("MANAGE_CHANNELS")) return message.channel.send(`:tools: , **البوت لا يملك صلاحيات لصنع الروم**`);
+		console.log(current);
+		let openReason = "";
+		current++;
+    	message.guild.createChannel(`ticket-${current}`, 'text').then(c => {
+		tchannels.push(c.id);
+		c.setParent(category);
+		message.channel.send(`**:tickets: تم عمل التكت.**`);
+		c.overwritePermissions(message.guild.id, {
+			READ_MESSAGES: false,
+			SEND_MESSAGES: false
+		});
+		c.overwritePermissions(message.author.id, {
+			READ_MESSAGES: true,
+			SEND_MESSAGES: true
+		});
+		
+		if(args[1]) openReason = `\nسبب فتح التكت , " **${args.slice(1).join(" ")}** "`;
+		let embed = new Discord.RichEmbed()
+		.setAuthor(message.author.username, message.author.avatarURL)
+		.setColor("#36393e")
+		.setDescription(`**انتظر قليلا الى حين رد الادارة عليك**${openReason}`);
+		c.send(`${message.author}`);
+		c.send(embed);
+	});
+    } else if(args[0].toLowerCase() === `${prefix}mtickets`) {
+        if(!message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`:tools: , **أنت لست من ادارة السيرفر لتنفيذ هذا الأمر.**`);
+		if(args[1] && args[1].toLowerCase() === "enable") {
+			mtickets = true;
+			message.channel.send(`:white_check_mark: , **تم تفعيل التكتات , الاَن يمكن لأعضاء السيرفر استخدام امر انشاء التكت**`);
+		} else if(args[1] && args[1].toLowerCase() === "disable") {
+			mtickets = false;
+			message.channel.send(`:white_check_mark: , **تم اغلاق نظام التكتات , الاَن لا يمكن لأي عضو استخدام هذا الأمر**`);
+		} else if(!args[1]) {
+			if(mtickets === true) {
+			mtickets = false;
+			message.channel.send(`:white_check_mark: , **تم اغلاق نظام التكتات , الاَن لا يمكن لأي عضو استخدام هذا الأمر**`);
+			} else if(mtickets === false) {
+			mtickets = true;
+			message.channel.send(`:white_check_mark: , **تم تفعيل التكتات , الاَن يمكن لأعضاء السيرفر استخدام امر انشاء التكت**`);
+			}
+		}
+    } else if(args[0].toLowerCase() === `${prefix}close`) {
+		if(!message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`:tools:, **أنت لست من ادارة السيرفر لتنفيذ هذا الأمر.**`);
+		if(!message.channel.name.startsWith('ticket-') && !tchannels.includes(message.channel.id)) return message.channel.send(`:tools:, **هذا الروم ليس من رومات التكت.**`);
+		
+		message.channel.send(`:white_check_mark:, **سيتم اغلاق الروم في 3 ثواني من الاَن.**`);
+		tchannels.splice( tchannels.indexOf(message.channel.id), 1 );
+		setTimeout(() => message.channel.delete(), 3000);
+	} else if(args[0].toLowerCase() === `${prefix}restart`) {
+		if(!devs.includes(message.author.id)) return message.channel.send(`:tools:, **أنت لست من ادارة السيرفر لأستخدام هذا الأمر.**`);
+		message.channel.send(`:white_check_mark:, **جارى اعادة تشغيل البوت.**`);
+		client.destroy();
+	} else if(args[0].toLowerCase() === `${prefix}deletetickets`) {
+		let iq = 0;
+		for(let q = 0; q < tchannels.length; q++) {
+			let c = message.guild.channels.get(tchannels[q]);
+			if(c) {
+				c.delete();
+				tchannels.splice( tchannels[q], 1 );
+				iq++;
+			}
+			if(q === tchannels.length - 1 || q === tchannels.lengh + 1) {
+				message.channel.send(`:white_check_mark:, **تم مسح \`${iq}\` من التكتات.**`);
+			}
+		}
+	}
 });
-
-
-
-client.on('message', message => {
-  if (true) {
-if (message.content === '-invite') {
-      message.author.send(' https://discordapp.com/api/oauth2/authorize?client_id=558575428499931136&permissions=8&scope=bot  |  تفضل ربط البوت     ').catch(e => console.log(e.stack));
- 
-    }
-   }
-  });
- 
- 
-client.on('message', message => {
-     if (message.content === "-invite") {
-     let embed = new Discord.RichEmbed()
-  .setAuthor(message.author.username)
-  .setColor("#9B59B6")
-  .addField(" Done | تــــم" , " |  تــــم ارســالك في الخــاص")
-     
-     
-     
-  message.channel.sendEmbed(embed);
-    }
-});
-
-
-
- 
- 
- client.on('message', message => {
-     if (message.content === (prefix + "bot")) {
-         if(!message.channel.guild) return;
-     let embed = new Discord.RichEmbed()//DIAMONDCODES
-  .setColor("#8650a7")//DIAMONDCODES
-  .addField("** ✅ Servers: **" , client.guilds.size)//DIAMONDCODES
-  .addField("** ✅ Users: **" , client.users.size)//DIAMONDCODES
-  .addField("** ✅ Channels: **" , client.channels.size)//DIAMONDCODES
-    .addField("** 🚀 Ping **" , Date.now() - message.createdTimestamp)//DIAMONDCODES
-    .setTimestamp()//DIAMONDCODES
-  message.channel.sendEmbed(embed);//DIAMONDCODES
-    }
-});
-
-const developers = ["527505679171321856","id"]
-client.on('message', message => {
-    var argresult = message.content.split(` `).slice(1).join(' ');
-      if (!developers.includes(message.author.id)) return;
-      
-  if (message.content.startsWith(prefix + 'setg')) {
-    client.user.setGame(argresult);
-      message.channel.send(`**✅   ${argresult}**`)
-  } else 
-     if (message.content === (prefix + "leave")) {
-    message.guild.leave();        
-  } else  
-  if (message.content.startsWith(prefix + 'setw')) {
-  client.user.setActivity(argresult, {type:'WATCHING'});
-      message.channel.send(`**✅   ${argresult}**`)
-  } else 
-  if (message.content.startsWith(prefix + 'setl')) {
-  client.user.setActivity(argresult , {type:'LISTENING'});
-      message.channel.send(`**✅   ${argresult}**`)
-  } else 
-  if (message.content.startsWith(prefix + 'sets')) {
-    client.user.setGame(argresult, "https://www.twitch.tv/dream");
-      message.channel.send(`**✅**`)
-  }
-  if (message.content.startsWith(prefix + 'setname')) {
-  client.user.setUsername(argresult).then
-      message.channel.send(`Changing The Name To ..**${argresult}** `)
-} else
-if (message.content.startsWith(prefix + 'setava')) {
-  client.user.setAvatar(argresult);
-    message.channel.send(`Changing The Avatar To :**${argresult}** `);
-}
-});
-
-
-client.on('message', message => {    
-    var prefix = "-";
-            if (message.content.startsWith(prefix + "rename")) {
-                if(!message.channel.guild) return;
-                if (!message.member.hasPermission("MANAGE_CHANNEL"))  return;
-      var a= message.content.split(' ').slice(1).join("  ");
-      if (!a) return message.reply("Example `-rename Light`")
-      message.channel.setName(`${a}`)
-      .then(newChannel => message.channel.send(`تم تغير اسم الروم الــى [**${a}**]`))
-      .catch(console.error);
-            }
-        });
-
 
 client.login(process.env.BOT_TOKEN);
