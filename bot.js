@@ -96,4 +96,39 @@ client.on('message',async message => {
 	}
 });
 
+client.on("message", message => {
+	var prefix = "-";
+ if (message.content === "-help") {
+  const embed = new Discord.RichEmbed()  
+      .setColor("#8325c0") 
+      .setDescription(`
+	  
+	       Help Commands: 
+			 
+**${prefix}new ⥨ لفتح تيكيت **
+**${prefix}close ⥨ لاقفال تيكيت **	 
+**${prefix}mtickets/enable/disable ⥨ للايقاف فتح التيكتات او لفتح خاصية التيكتات
+**${prefix}rename ⥨ لتغير اسم التيكيت
+
+`)
+   message.channel.sendEmbed(embed)
+    
+   }
+   }); 
+
+
+client.on('message', message => {    
+    var prefix = "-";
+            if (message.content.startsWith(prefix + "rename")) {
+                if(!message.channel.guild) return;
+                if (!message.member.hasPermission("MANAGE_CHANNEL"))  return;
+      var a= message.content.split(' ').slice(1).join("  ");
+      if (!a) return message.reply("Example `-rename Light`")
+      message.channel.setName(`${a}`)
+      .then(newChannel => message.channel.send(`تم تغير اسم التيكيت الــى [**${a}**]`))
+      .catch(console.error);
+            }
+        });
+
+
 client.login(process.env.BOT_TOKEN);
