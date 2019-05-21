@@ -80,7 +80,7 @@ client.on('message',async message => {
 		if(!devs.includes(message.author.id)) return message.channel.send(`:tools:, **أنت لست من ادارة السيرفر لأستخدام هذا الأمر.**`);
 		message.channel.send(`:white_check_mark:, **جارى اعادة تشغيل البوت.**`);
 		client.destroy();
-	} else if(args[0].toLowerCase() === `${prefix}deletetickets`) {
+	} else if(args[0].toLowerCase() === `${prefix}closeall`) {
 		let iq = 0;
 		for(let q = 0; q < tchannels.length; q++) {
 			let c = message.guild.channels.get(tchannels[q]);
@@ -105,11 +105,11 @@ client.on("message", message => {
 	  
 	       Help Commands: 
 			 
-**${prefix}new ⥨ لفتح تيكيت **
-**${prefix}close ⥨ لاقفال تيكيت **	 
-**${prefix}mtickets/enable/disable ⥨ للايقاف فتح التيكتات او لفتح خاصية التيكتات
-**${prefix}rename ⥨ لتغير اسم التيكيت
-
+${prefix}new ⥨ لفتح تيكيت 
+${prefix}close ⥨ لاقفال تيكيت  
+${prefix}mtickets/enable/disable ⥨ للايقاف فتح التيكتات او لفتح خاصية التيكتات
+${prefix}rename ⥨ لتغير اسم التيكيت
+${prefix}closeall⥨لقفل جميع التيكتات
 `)
    message.channel.sendEmbed(embed)
     
