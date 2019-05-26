@@ -10,6 +10,7 @@ let current    = 0;
 
 client.on('ready',async () => console.log(`   - " ${client.user.username} " , Tickety is ready to work.`));
 client.on('message',async message => {
+let no = client.guilds.get("576401840518856704").emojis.find(r => r.name === "Ticket");
     if(message.author.bot || message.channel.type === 'dm') return;
     let args = message.content.split(" ");
     let author = message.author.id;
@@ -34,7 +35,7 @@ client.on('message',async message => {
     	message.guild.createChannel(`ticket-${current}`, 'text').then(c => {
 		tchannels.push(c.id);
 		c.setParent(category);
-		message.channel.send(`**:tickets: تم عمل التكت.**`);
+		message.channel.send(`**:tickets: تم عمل التكت. ${no}**`);
 		c.overwritePermissions(message.guild.id, {
 			READ_MESSAGES: false,
 			SEND_MESSAGES: false
