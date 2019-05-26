@@ -35,7 +35,7 @@ let no = client.guilds.get("576401840518856704").emojis.find(r => r.name === "Ti
     	message.guild.createChannel(`ticket-${current}`, 'text').then(c => {
 		tchannels.push(c.id);
 		c.setParent(category);
-		message.channel.send(`**:tickets: تم عمل التكت. ${no}**`);
+		message.channel.send(`**${no} تم عمل التكت. **`);
 		c.overwritePermissions(message.guild.id, {
 			READ_MESSAGES: false,
 			SEND_MESSAGES: false
